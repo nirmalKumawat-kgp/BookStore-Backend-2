@@ -33,15 +33,37 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.FLOAT,
         allowNull: false,
       },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      category: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       tableName: "books",
     }
   );
+  Book.beforeCreate(async (book, options) => {
+    const category = await sequelize.models.BookCategory.findOne({
+      where: { id: book.BookCategoryId },
+    });
+    console.log(category);
+    book.category = category.name;
+  });
   Book.associate = (models) => {
-    Book.belongsToMany(models.Cart, { through: "CartItem" });
-    Book.belongsToMany(models.Cart, { through: "OrderItem" });
+    Book.belongsToMany(models.Cart, {
+      through: "CartItem",
+      onDelete: "cascade",
+    });
+    Book.belongsToMany(models.Cart, {
+      through: "OrderItem",
+      onDelete: "cascade",
+    });
     Book.belongsTo(models.BookCategory);
   };
+
   return Book;
 };

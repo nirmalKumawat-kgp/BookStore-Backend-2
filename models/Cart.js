@@ -11,11 +11,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     { tableName: "carts" }
   );
+
   Cart.associate = (models) => {
     Cart.belongsTo(models.User);
     Cart.belongsToMany(models.Book, {
       through: "CartItem",
     });
   };
+
   return Cart;
 };

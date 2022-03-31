@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { Cart } = require("./");
+const { Cart } = require("../models");
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
@@ -53,9 +53,11 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "users",
     }
   );
+
   User.prototype.verifyPassword = async function (password) {
     return bcrypt.compareSync(password, this.password);
   };
+
   User.prototype.getSignedToken = function () {
     const token = jwt.sign({ id: this.id }, process.env.JWT_SECRET_KEY, {
       expiresIn: process.env.EXPIRES_IN,
@@ -69,16 +71,18 @@ module.exports = (sequelize, DataTypes) => {
       user.password = await bcrypt.hash(user.password, salt);
     }
   });
-  // User.beforeCreate(async (user, options) => {
-  //   let cart = await Cart.create();
-  //   Cart.setUser(user);
-  //   await cart.save();
-  //   console.log(cart);
-  // });
+
+  User.afterCreate(async (user, options) => {
+    const userId = user.id;
+    let cart = await sequelize.models.Cart.create({ UserId: userId });
+    await cart.save();
+  });
+
   User.associate = (models) => {
-    User.hasOne(models.Cart);
-    User.hasMany(models.Order);
-    User.hasMany(models.Address);
+    User.hasOne(models.Cart, { onDelete: "cascade" });
+    User.hasMany(models.Order, { onDelete: "cascade" });
+    User.hasMany(models.Address, { onDelete: "cascade" });
   };
+
   return User;
 };

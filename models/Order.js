@@ -7,10 +7,12 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
   });
+
   Order.associate = (models) => {
     Order.belongsToMany(models.Book, { through: "OrderItem" });
     Order.belongsTo(models.User);
     Order.belongsTo(models.Address);
   };
+
   return Order;
 };

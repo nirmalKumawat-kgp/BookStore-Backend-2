@@ -10,8 +10,10 @@ module.exports = (sequelize, DataTypes) => {
       notNull: true,
     },
   });
+
   BookCategory.associate = (models) => {
     BookCategory.hasMany(models.Book);
   };
+
   return BookCategory;
 };
