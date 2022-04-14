@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      bookImage: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       tableName: "books",
@@ -50,8 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     const category = await sequelize.models.BookCategory.findOne({
       where: { id: book.BookCategoryId },
     });
-    console.log(category);
-    book.category = category.name;
+    if (category) {
+      book.category = category.name;
+    }
   });
   Book.associate = (models) => {
     Book.belongsToMany(models.Cart, {

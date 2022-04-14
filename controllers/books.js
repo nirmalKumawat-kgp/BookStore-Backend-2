@@ -55,7 +55,7 @@ exports.addBook = async (req, res, next) => {
   if (book) {
     return next(new ErrorResponse("Book Already Exists", 401));
   }
-  console.log(quantity);
+
   book = await Book.create({
     name,
     author,
@@ -63,6 +63,7 @@ exports.addBook = async (req, res, next) => {
     discountPrice,
     BookCategoryId,
     quantity,
+    bookImage: req.file.path,
   });
   await book.save();
 

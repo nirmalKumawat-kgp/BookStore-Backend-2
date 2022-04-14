@@ -4,7 +4,14 @@ const { User } = require("../models");
 const ErrorResponse = require("../utils/errorResponse");
 
 exports.isAuth = async (req, res, next) => {
-  const { token } = req.body;
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
 
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
   const user = await User.findByPk(decodedToken.id);
