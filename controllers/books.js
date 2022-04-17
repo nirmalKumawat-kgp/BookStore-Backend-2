@@ -46,6 +46,7 @@ exports.addBook = async (req, res, next) => {
     BookCategoryId,
     quantity,
   } = req.body;
+
   if (!name || !author || !originalPrice) {
     return next(
       new ErrorResponse("Please Provide all the required details", 400)
@@ -65,9 +66,10 @@ exports.addBook = async (req, res, next) => {
     quantity,
     bookImage: req.file.path,
   });
+  console.log(book);
   await book.save();
 
-  res.json(book);
+  res.json({ success: true, data: book });
 };
 
 //add new book category
@@ -87,4 +89,35 @@ exports.addBookCategory = async (req, res, next) => {
   bookCategory = await BookCategory.create({ name });
   await bookCategory.save();
   res.json(bookCategory);
+};
+
+//Update Queries
+exports.updateBook = async (req, res, next) => {
+  const id = req.params.id;
+  const { ...updatedValues } = req.body;
+  console.log(updatedValues);
+  try {
+    const book = await Book.findByPk(id);
+    if (!book) {
+      next(new ErrorResponse("No Book Was Found", 404));
+    }
+    await book.update(updatedValues);
+    res.status(202).json({ success: true, data: book });
+  } catch (error) {
+    next(error);
+  }
+};
+exports.deleteBook = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const book = await Book.findByPk(id);
+    if (!book) {
+      return next(new ErrorResponse("Book does not exist", 404));
+    }
+    await book.destroy();
+
+    res.status(200).json({ success: true, data: "Book Deleted Successfully" });
+  } catch (error) {
+    next(error);
+  }
 };
