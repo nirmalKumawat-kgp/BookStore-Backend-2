@@ -12,17 +12,19 @@ exports.isAuth = async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await User.findByPk(decodedToken.id);
 
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  const user = await User.findByPk(decodedToken.id);
+    //   console.log(user);
 
-  //   console.log(user);
+    if (!user) {
+      next(new ErrorResponse("You are not authorized to this route", 404));
+    }
 
-  if (!user) {
-    next(new ErrorResponse("You are not authorized to this route", 404));
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
   }
-
-  req.user = user;
-
-  next();
 };

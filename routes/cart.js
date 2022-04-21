@@ -1,8 +1,8 @@
 const express = require("express");
-const { getCart } = require("../controllers/cart");
+const { getCart, addCartItem } = require("../controllers/cart");
 const { isAuth } = require("../middleware/auth");
 const router = express.Router();
 
-router.post("/", isAuth, getCart);
-
+router.get("/", isAuth, getCart);
+router.post("/addItem", isAuth, addCartItem);
 module.exports = router;

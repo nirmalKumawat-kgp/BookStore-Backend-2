@@ -42,8 +42,6 @@ router.get("/getAllBooks", getAllBooks);
 
 router.get("/getAllBookCategory", getAllBookCategory);
 
-router.get("/:id", getBook);
-
 router.post("/addBook", upload.single("bookImage"), addBook);
 
 router.post("/addBookCategory", addBookCategory);
@@ -51,5 +49,7 @@ router.post("/addBookCategory", addBookCategory);
 router.put("/update/:id", upload.single("bookImage"), updateBook);
 
 router.delete("/delete/:id", deleteBook);
+
+router.get("/:id", getBook);
 
 module.exports = router;

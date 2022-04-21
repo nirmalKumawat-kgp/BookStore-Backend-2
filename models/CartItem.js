@@ -5,10 +5,8 @@ module.exports = (sequelize, DataTypes) => {
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
-        defaultValue: 0,
+
+        defaultValue: 1,
       },
     },
     {

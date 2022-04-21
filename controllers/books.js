@@ -20,15 +20,10 @@ exports.getAllBookCategory = async (req, res, next) => {
 // get a book with its id
 exports.getBook = async (req, res, next) => {
   let params = req.params;
-  console.log(params);
+
   const book = await Book.findByPk(params.id);
-  console.log(book);
-  const bookCategory = await BookCategory.findByPk(book.BookCategoryId);
-  let categoryName;
-  if (bookCategory) {
-    categoryName = bookCategory.name;
-  } else {
-    categoryName = null;
+  if (!book) {
+    return next(new ErrorResponse("No Book Found", 404));
   }
   res.status(200).json({
     success: true,
@@ -66,7 +61,7 @@ exports.addBook = async (req, res, next) => {
     quantity,
     bookImage: req.file.path,
   });
-  console.log(book);
+
   await book.save();
 
   res.json({ success: true, data: book });
@@ -95,7 +90,7 @@ exports.addBookCategory = async (req, res, next) => {
 exports.updateBook = async (req, res, next) => {
   const id = req.params.id;
   const { ...updatedValues } = req.body;
-  console.log(updatedValues);
+
   try {
     const book = await Book.findByPk(id);
     if (!book) {
